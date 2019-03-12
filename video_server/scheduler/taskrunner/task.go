@@ -24,7 +24,9 @@ func deleteVideo(vid string) error {
 func VideoClearDispatcher(dc dataChan) error {
 	res, err := dbops.ReadVideoDeletionRecord(3)
 	if err != nil {
-		log.Printf("Video clear dispatcher error: %v", err)
+		log.Printf(
+			"Video clear dispatcher error: %v",
+			err)
 		return err
 	}
 
@@ -46,12 +48,15 @@ forloop:
 		select {
 		case vid := <-dc:
 			go func(id interface{}) {
-				if err := deleteVideo(id.(string)); err != nil {
+				if err := deleteVideo(id.(string));
+					err != nil {
 					errMap.Store(id, err)
 					return
 				}
 
-				if err := dbops.DelVideoDeletionRecord(id.(string)); err != nil {
+				if err :=
+					dbops.DelVideoDeletionRecord(id.(string));
+					err != nil {
 					errMap.Store(id, err)
 					return
 				}

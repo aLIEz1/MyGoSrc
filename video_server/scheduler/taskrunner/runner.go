@@ -14,7 +14,8 @@ type Runner struct {
 	Executor   fn
 }
 
-func NewRunner(size int, longlived bool, d fn, e fn) *Runner {
+func NewRunner(size int,
+	longlived bool, d fn, e fn) *Runner {
 	return &Runner{
 		Controller: make(chan string, 1),
 		Error:      make(chan string, 1),
@@ -45,15 +46,15 @@ func (r *Runner) starDispatch() {
 					r.Controller <- READY_TO_EXECUTE
 				}
 			}
-				if c == READY_TO_EXECUTE {
-					err := r.Executor(r.Data)
-					if err != nil {
-						r.Error <- CLOSER
-					} else {
-						r.Controller <- READY_TO_DISPATCH
-					}
-
+			if c == READY_TO_EXECUTE {
+				err := r.Executor(r.Data)
+				if err != nil {
+					r.Error <- CLOSER
+				} else {
+					r.Controller <- READY_TO_DISPATCH
 				}
+
+			}
 		case e := <-r.Error:
 			if e == CLOSER {
 				return
@@ -63,7 +64,7 @@ func (r *Runner) starDispatch() {
 		}
 	}
 }
-func (r *Runner)StartAll()  {
-	r.Controller<-READY_TO_DISPATCH
+func (r *Runner) StartAll() {
+	r.Controller <- READY_TO_DISPATCH
 	r.starDispatch()
 }
